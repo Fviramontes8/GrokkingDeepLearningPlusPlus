@@ -1,5 +1,5 @@
 # Based off of 'https://gitlab.com/CLIUtils/modern-cmake/-/blob/master/examples/extended-project/CMakeLists.txt'
-cmake_minimum_required(VERSION 3.14..3.8)
+cmake_minimum_required(VERSION 3.8..3.20)
 
 project(
 	VectorMath 
