@@ -1,5 +1,5 @@
 # Based off of 'https://gitlab.com/CLIUtils/modern-cmake/-/blob/master/examples/extended-project/CMakeLists.txt'
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.14..3.8)
 
 # Force C++20 on project
 set(CMAKE_CXX_STANDARD 20)
