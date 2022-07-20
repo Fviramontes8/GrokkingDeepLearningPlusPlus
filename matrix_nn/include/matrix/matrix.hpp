@@ -19,6 +19,7 @@ namespace FENK {
 		public:
 			Matrix(std::size_t rows, std::size_t cols): _rows{rows}, 
 					_cols{cols}, _data{rows, std::vector<N>{cols}} {}
+
 			Matrix(std::size_t rows, std::size_t cols, N init_value): 
 					_rows{rows}, _cols{cols}, 
 					_data{rows, std::vector<N>{cols}} {
