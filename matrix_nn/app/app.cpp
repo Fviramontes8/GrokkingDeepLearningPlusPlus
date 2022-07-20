@@ -45,20 +45,5 @@ int main() {
 		std::cout << '\n';
 	}
 
-	FENK::Matrix<int> a = {
-		{1, 2, 3},
-		{4, 5, 6}
-	};
-
-	FENK::Matrix<int> b = {
-		{1, 2, 3, 4},
-		{5, 6, 7, 8},
-		{9, 10, 11, 12}
-	};
-
-	FENK::Matrix<int> c = a * b;
-	
-	std::cout << '\n' << c << '\n';
-
 	return 0;
 }
