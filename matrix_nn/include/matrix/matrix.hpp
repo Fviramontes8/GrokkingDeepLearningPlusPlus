@@ -1,3 +1,6 @@
+#ifndef FENK_MATRIX_CLASS
+#define FENK_MATRIX_CLASS
+
 #include <cassert>
 #include <concepts>
 #include <initializer_list>
@@ -214,3 +217,5 @@ namespace FENK {
 			return out;
 		}
 }
+
+#endif // FENK_MATRIX_CLASS
