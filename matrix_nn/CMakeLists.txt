@@ -11,3 +11,6 @@ project(
 
 include_directories(${PROJECT_SOURCE_DIR})
 add_subdirectory(app)
+
+enable_testing()
+add_subdirectory(tests)
