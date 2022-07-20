@@ -27,7 +27,6 @@ endif()
 
 include_directories(${PROJECT_SOURCE_DIR})
 
-
 enable_testing()
 add_subdirectory(tests)
 
