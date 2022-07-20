@@ -1,7 +1,7 @@
 #include <cassert>
 #include <concepts>
 #include <initializer_list>
-#include <ostream>
+#include <iostream>
 #include <type_traits>
 #include <vector>
 
@@ -18,16 +18,22 @@ namespace FENK {
 	
 		public:
 			Matrix(std::size_t rows, std::size_t cols): _rows{rows}, 
-					_cols{cols}, _data{rows, std::vector<N>{cols}} {}
+					_cols{cols}, _data{rows, std::vector<N>(cols)} {}
 
 			Matrix(std::size_t rows, std::size_t cols, N init_value): 
 					_rows{rows}, _cols{cols}, 
-					_data{rows, std::vector<N>{cols}} {
+					_data{rows, std::vector<N>(cols)} {
 				for (auto& x: _data) {
 					for (auto& y: x) {
 						y = init_value;
 					}
 				}
+			}
+
+			Matrix(std::initializer_list<std::vector<N>> lst):
+					_rows{lst.size()}, _cols{(*(lst.begin())).size()},
+					_data(lst.size()) {
+				std::copy(lst.begin(), lst.end(), _data.begin());
 			}
 
 			Matrix(std::initializer_list<std::initializer_list<N>> lst):
@@ -52,6 +58,20 @@ namespace FENK {
 			}
 
 			// Think about multi-threading
+			Matrix seq_add(const Matrix& m) const {
+				assert(rows() == m.rows());
+				assert(cols() == m.cols());
+				Matrix result(rows(), cols());
+
+				for (std::size_t i=0; i<rows(); ++i) {
+					for (std::size_t j=0; j<cols(); ++j) {
+						result[i][j] = _data[i][j] + m[i][j];
+					}
+				}
+				return result;
+			}
+
+			// Think about multi-threading
 			Matrix seq_add(const Matrix& m) {
 				assert(rows() == m.rows());
 				assert(cols() == m.cols());
@@ -66,13 +86,13 @@ namespace FENK {
 			}
 
 			// Think about multi-threading
-			Matrix seq_mult(const Matrix& m) {
+			Matrix seq_mult(const Matrix& m) const {
 				assert(cols() == m.rows());
 				Matrix result(rows(), m.cols());
 
 				for (std::size_t i=0; i<rows(); ++i) {
 					for (std::size_t j=0; j<cols(); ++j) {
-						for (std::size_t k=0; m.cols(); ++k) {
+						for (std::size_t k=0; k<m.cols(); ++k) {
 							result[i][k] = _data[i][j] + m[j][k];
 						}
 					}
@@ -80,8 +100,46 @@ namespace FENK {
 				return result;
 			}
 
+			// Think about multi-threading
+			Matrix seq_mult(const Matrix& m) {
+				assert(cols() == m.rows());
+				Matrix result(rows(), m.cols());
+
+				for (std::size_t i=0; i<rows(); ++i) {
+					for (std::size_t j=0; j<cols(); ++j) {
+						for (std::size_t k=0; k<m.cols(); ++k) {
+							result[i][k] = _data[i][j] + m[j][k];
+						}
+					}
+				}
+				return result;
+			}
+
+			std::vector<N> seq_vect_mult(const std::vector<N>& v) const {
+				assert(v.size() == cols());
+				std::vector<N> result(v.size(), 0);
+				for (std::size_t i=0; i<cols(); ++i) {
+					for (std::size_t j=0; j<rows(); ++j) {
+						result[i] += v[j] * _data[i][j];
+					}
+				}
+				return result;
+			}
+
+			std::vector<N> seq_vect_mult(const std::vector<N>& v) {
+				assert(v.size() == cols());
+				std::vector<N> result(v.size(), 0);
+				for (std::size_t i=0; i<cols(); ++i) {
+					for (std::size_t j=0; j<rows(); ++j) {
+						result[i] += v[j] * _data[i][j];
+					}
+				}
+				return result;
+			}
+
+
 			// Think about multi-threading???
-			Matrix T() {
+			Matrix T() const {
 				Matrix result(cols(), rows());
 
 				for (std::size_t i=0; i<rows(); ++i) {
@@ -96,7 +154,27 @@ namespace FENK {
 				return T();
 			}
 
-			const N& operator[](const std::size_t idx) {
+			std::vector<N> operator*(const std::vector<N>& v) const {
+				return seq_vect_mult(v);
+			}
+
+			std::vector<N> operator*(const std::vector<N>& v) {
+				return seq_vect_mult(v);
+			}
+
+			Matrix operator*(const Matrix& m) const {
+				return seq_mult(m);
+			}
+
+			Matrix operator*(const Matrix& m) {
+				return seq_mult(m);
+			}
+
+			const std::vector<N>& operator[](const std::size_t& idx) const {
+				return _data[idx];
+			}
+
+			std::vector<N>& operator[](std::size_t idx) {
 				return _data[idx];
 			}
 
