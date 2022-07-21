@@ -1,5 +1,5 @@
-#ifndef FENK_MATRIX_CLASS
-#define FENK_MATRIX_CLASS
+#ifndef FENK_VECT_MATRIX_CLASS
+#define FENK_VECT_MATRIX_CLASS
 
 #include <cassert>
 #include <concepts>
@@ -61,7 +61,7 @@ namespace FENK {
 			}
 
 			// Think about multi-threading
-			Matrix seq_add(const Matrix& m) const {
+			Matrix seq_element_add(const Matrix& m) const {
 				assert(rows() == m.rows());
 				assert(cols() == m.cols());
 				Matrix result(rows(), cols());
@@ -75,7 +75,7 @@ namespace FENK {
 			}
 
 			// Think about multi-threading
-			Matrix seq_add(const Matrix& m) {
+			Matrix seq_element_add(const Matrix& m) {
 				assert(rows() == m.rows());
 				assert(cols() == m.cols());
 				Matrix result(rows(), cols());
@@ -89,32 +89,61 @@ namespace FENK {
 			}
 
 			// Think about multi-threading
+			Matrix seq_element_mult(const Matrix& m) const {
+				assert(cols() == m.rows());
+				Matrix result(rows(), m.cols());
+
+				for (std::size_t i=0; i<rows(); ++i) {
+					for (std::size_t j=0; j<cols(); ++j) {
+						for (std::size_t k=0; k<m.cols(); ++k) {
+							result[i][k] = _data[i][j] + m[j][k];
+						}
+					}
+				}
+				return result;
+			}
+
+			// Think about multi-threading
+			Matrix seq_element_mult(const Matrix& m) {
+				assert(cols() == m.rows());
+				Matrix result(rows(), m.cols());
+
+				for (std::size_t i=0; i<rows(); ++i) {
+					for (std::size_t j=0; j<cols(); ++j) {
+						for (std::size_t k=0; k<m.cols(); ++k) {
+							result[i][k] = _data[i][j] + m[j][k];
+						}
+					}
+				}
+				return result;
+			}
+
+			// Inner product
 			Matrix seq_mult(const Matrix& m) const {
 				assert(cols() == m.rows());
-				Matrix result(rows(), m.cols());
-
-				for (std::size_t i=0; i<rows(); ++i) {
+				Matrix result(rows(), m.cols(), static_cast<N>(0));
+				for(std::size_t i=0; i<rows(); ++i) {
 					for (std::size_t j=0; j<cols(); ++j) {
 						for (std::size_t k=0; k<m.cols(); ++k) {
-							result[i][k] = _data[i][j] + m[j][k];
+							result[i][k] += _data[i][j] * m[j][k];
 						}
 					}
 				}
+
 				return result;
 			}
 
-			// Think about multi-threading
 			Matrix seq_mult(const Matrix& m) {
 				assert(cols() == m.rows());
-				Matrix result(rows(), m.cols());
-
-				for (std::size_t i=0; i<rows(); ++i) {
+				Matrix result(rows(), m.cols(), static_cast<N>(0));
+				for(std::size_t i=0; i<rows(); ++i) {
 					for (std::size_t j=0; j<cols(); ++j) {
 						for (std::size_t k=0; k<m.cols(); ++k) {
-							result[i][k] = _data[i][j] + m[j][k];
+							result[i][k] += _data[i][j] * m[j][k];
 						}
 					}
 				}
+
 				return result;
 			}
 
@@ -181,6 +210,16 @@ namespace FENK {
 				return _data[idx];
 			}
 
+			/*
+			const N& operator()(std::size_t idx_x, std::size_t idx_y) const {
+				return _data[idx_x][idx_y];
+			}
+
+			N& operator()(std::size_t idx_x, std::size_t idx_y) {
+				return _data[idx_x][idx_y];
+			}
+			*/
+
 			Matrix& operator=(const Matrix& mat) {
 				if (this == &mat) { return *this; }
 
@@ -218,4 +257,4 @@ namespace FENK {
 		}
 }
 
-#endif // FENK_MATRIX_CLASS
+#endif // FENK_VECT_MATRIX_CLASS
