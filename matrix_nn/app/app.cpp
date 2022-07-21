@@ -45,5 +45,9 @@ int main() {
 		std::cout << '\n';
 	}
 
+	FENK::Matrix<float> pred = weights * input;
+	std::cout << '\n' << pred << '\n';
+	std::cout << pred.T() << '\n';
+
 	return 0;
 }
