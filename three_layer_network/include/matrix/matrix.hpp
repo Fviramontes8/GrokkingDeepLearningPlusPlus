@@ -184,6 +184,22 @@ namespace FENK {
 
 			Matrix2D& operator=(const Matrix2D& m) {
 				if (this == &m) {  return *this; }
+
+				for (std::size_t i=0; i<rows(); ++i) {
+					delete[] _data[i];
+				}
+				delete[] _data;
+
+				_rows = m._rows;
+				_cols = m._cols;
+				matrix_alloc();
+
+				for (std::size_t i=0; i<rows(); ++i) {
+					for (std::size_t j=0; j<cols(); ++j) {
+						_data[i][j] = m._data[i][j];
+					}
+				}
+
 				return *this;
 			}
 
