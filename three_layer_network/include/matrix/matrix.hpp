@@ -73,6 +73,25 @@ namespace FENK {
 				}
 			}
 
+			Matrix2D(const Matrix2D& m): _rows{m._rows}, _cols{m._cols},
+					_data{nullptr} {
+				matrix_alloc();
+				for (std::size_t i=0; i<rows(); ++i) {
+					for (std::size_t j=0; j<cols(); ++j) {
+						_data[i][j] = m._data[i][j];
+					}
+				}
+			}
+
+			Matrix2D(Matrix2D&& m): _rows{std::move(m._rows)},
+					_cols{std::move(m._cols)}, _data{nullptr} {
+				matrix_alloc();
+				for (std::size_t i=0; i<rows(); ++i) {
+					for (std::size_t j=0; j<cols(); ++j) {
+						_data[i][j] = std::move(m._data[i][j]);
+					}
+				}
+			}
 
 			~Matrix2D() {
 				for (std::size_t i=0; i<rows(); ++i) {
@@ -110,8 +129,62 @@ namespace FENK {
 				return iterator(&_data[rows()]);
 			}
 
+			// General methods
+			Matrix2D seq_dot(const Matrix2D& m) const {
+				assert(cols() == m.rows());
+				Matrix2D result(rows(), m.cols(), static_cast<N>(0));
+				for(std::size_t i=0; i<rows(); ++i) {
+					for (std::size_t j=0; j<cols(); ++j) {
+						for (std::size_t k=0; k<m.cols(); ++k) {
+							result[i][k] += _data[i][j] * m[j][k];
+						}
+					}
+				}
+				return result;
+			}
+
+			std::vector<N> seq_vect_mult(const std::vector<N>& v) const {
+				assert(v.size() == cols());
+				std::vector<N> result(v.size(), 0);
+				for (std::size_t i=0; i<cols(); ++i) {
+					for (std::size_t j=0; j<rows(); ++j) {
+						result[i] += v[j] * _data[i][j];
+					}
+				}
+				return result;
+			}
+
+
+			// Think about multi-threading???
+			Matrix2D T() const {
+				Matrix2D result(cols(), rows());
+				for (std::size_t i=0; i<rows(); ++i) {
+					for (std::size_t j=0; j<cols(); ++j) {
+						result[j][i] = _data[i][j];
+					}
+				}
+				return result;
+			}
+
+			Matrix2D Transpose() const {
+				return T();
+			}
+
+			std::vector<N> operator*(const std::vector<N>& v) const {
+				return seq_vect_mult(v);
+			}
+
+			Matrix2D operator*(const Matrix2D& m) const {
+				return seq_dot(m);
+			}
+
 			N& operator()(std::size_t idx_x, std::size_t idx_y) {
 				return _data[idx_x][idx_y];
+			}
+
+			Matrix2D& operator=(const Matrix2D& m) {
+				if (this == &m) {  return *this; }
+				return *this;
 			}
 
 			friend std::ostream& operator<<(
