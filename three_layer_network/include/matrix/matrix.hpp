@@ -136,7 +136,7 @@ namespace FENK {
 				for(std::size_t i=0; i<rows(); ++i) {
 					for (std::size_t j=0; j<cols(); ++j) {
 						for (std::size_t k=0; k<m.cols(); ++k) {
-							result[i][k] += _data[i][j] * m[j][k];
+							result(i, k) += _data[i][j] * m(j, k);
 						}
 					}
 				}
@@ -160,7 +160,7 @@ namespace FENK {
 				Matrix2D result(cols(), rows());
 				for (std::size_t i=0; i<rows(); ++i) {
 					for (std::size_t j=0; j<cols(); ++j) {
-						result[j][i] = _data[i][j];
+						result(j, i) = _data[i][j];
 					}
 				}
 				return result;
@@ -178,7 +178,7 @@ namespace FENK {
 				return seq_dot(m);
 			}
 
-			N& operator()(std::size_t idx_x, std::size_t idx_y) {
+			N& operator()(std::size_t idx_x, std::size_t idx_y) const {
 				return _data[idx_x][idx_y];
 			}
 
