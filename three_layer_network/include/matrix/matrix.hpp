@@ -178,6 +178,11 @@ namespace FENK {
 				return seq_dot(m);
 			}
 
+			// TODO: Follow up in implementation
+			Matrix2D& operator-=(const Matrix2D& m) {
+				return *this;
+			}
+
 			N& operator()(std::size_t idx_x, std::size_t idx_y) const {
 				return _data[idx_x][idx_y];
 			}
